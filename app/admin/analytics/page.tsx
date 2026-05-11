@@ -15,9 +15,31 @@ export default function AdminAnalyticsPage() {
   async function loadAnalytics() {
     try {
       const [ridesData, driversData, ridersData, paymentsData, safetyData, zonesData] =
-        await Promise.all([
-          const [ridesData, driversData, ridersData, paymentsData, safetyData, zonesData] =
   await Promise.all([
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/rides`, { cache: "no-store" })
+      .then((r) => r.json())
+      .catch(() => []),
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/drivers`, { cache: "no-store" })
+      .then((r) => r.json())
+      .catch(() => []),
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/riders`, { cache: "no-store" })
+      .then((r) => r.json())
+      .catch(() => []),
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments`, { cache: "no-store" })
+      .then((r) => r.json())
+      .catch(() => []),
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/safety/reports`, { cache: "no-store" })
+      .then((r) => r.json())
+      .catch(() => []),
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/heatmap/zones`, { cache: "no-store" })
+      .then((r) => r.json())
+      .catch(() => []),
+  ]);
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/rides`, { cache: "no-store" })
       .then((r) => r.json())
       .catch(() => []),
