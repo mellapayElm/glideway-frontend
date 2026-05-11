@@ -12,61 +12,55 @@ export default function AdminAnalyticsPage() {
   const [zones, setZones] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  async function loadAnalytics() {
-    try {
-      const [ridesData, driversData, ridersData, paymentsData, safetyData, zonesData] =
-  await Promise.all([
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/rides`, { cache: "no-store" })
-      .then((r) => r.json())
-      .catch(() => []),
+ async function loadAnalytics() {
+  try {
+    const [
+      ridesData,
+      driversData,
+      ridersData,
+      paymentsData,
+      safetyData,
+      zonesData,
+    ] = await Promise.all([
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/rides`, {
+        cache: "no-store",
+      })
+        .then((r) => r.json())
+        .catch(() => []),
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/drivers`, { cache: "no-store" })
-      .then((r) => r.json())
-      .catch(() => []),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/drivers`, {
+        cache: "no-store",
+      })
+        .then((r) => r.json())
+        .catch(() => []),
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/riders`, { cache: "no-store" })
-      .then((r) => r.json())
-      .catch(() => []),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/riders`, {
+        cache: "no-store",
+      })
+        .then((r) => r.json())
+        .catch(() => []),
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments`, { cache: "no-store" })
-      .then((r) => r.json())
-      .catch(() => []),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments`, {
+        cache: "no-store",
+      })
+        .then((r) => r.json())
+        .catch(() => []),
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/safety/reports`, { cache: "no-store" })
-      .then((r) => r.json())
-      .catch(() => []),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/safety/reports`, {
+        cache: "no-store",
+      })
+        .then((r) => r.json())
+        .catch(() => []),
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/heatmap/zones`, { cache: "no-store" })
-      .then((r) => r.json())
-      .catch(() => []),
-  ]);
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/rides`, { cache: "no-store" })
-      .then((r) => r.json())
-      .catch(() => []),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/heatmap/zones`, {
+        cache: "no-store",
+      })
+        .then((r) => r.json())
+        .catch(() => []),
+    ]);
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/drivers`, { cache: "no-store" })
-      .then((r) => r.json())
-      .catch(() => []),
-
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/riders`, { cache: "no-store" })
-      .then((r) => r.json())
-      .catch(() => []),
-
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments`, { cache: "no-store" })
-      .then((r) => r.json())
-      .catch(() => []),
-
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/safety/reports`, { cache: "no-store" })
-      .then((r) => r.json())
-      .catch(() => []),
-
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/heatmap/zones`, { cache: "no-store" })
-      .then((r) => r.json())
-      .catch(() => []),
-  ]);
-
-      setRides(Array.isArray(ridesData) ? ridesData : []);
-      setDrivers(Array.isArray(driversData) ? driversData : []);
+    setRides(Array.isArray(ridesData) ? ridesData : []);
+    setDrivers(Array.isArray(driversData) ? driversData : []);
       setRiders(Array.isArray(ridersData) ? ridersData : []);
       setPayments(Array.isArray(paymentsData) ? paymentsData : []);
       setSafetyReports(Array.isArray(safetyData) ? safetyData : []);
