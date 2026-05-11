@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
 const driverId = "driver-001";
+
 const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "");
+
 export default function DriverEarningsPage() {
   const [earnings, setEarnings] = useState<any>(null);
   const [payouts, setPayouts] = useState<any[]>([]);
@@ -14,21 +16,28 @@ export default function DriverEarningsPage() {
   const [message, setMessage] = useState("");
 
   const latestPayout = payouts[0];
+
   const displayPayoutStatus =
     latestPayout?.status || earnings?.payoutStatus || "Available";
 
   async function loadEarnings() {
     try {
       const res = await fetch(
-  `${process.env.NEXT_PUBLIC_API_URL}/driver/${driverId}/earnings?t=${Date.now()}`,
-  { cache: "no-store" }
-);
+        `${process.env.NEXT_PUBLIC_API_URL}/driver/${driverId}/earnings?t=${Date.now()}`,
+        {
+          cache: "no-store",
+        }
+      );
 
-const data = await res.json();
+      const data = await res.json();
 
-const payoutRes = await fetch(
-  `${process.env.NEXT_PUBLIC_API_URL}/driver/payouts/${driverId}`
-);
+      const payoutRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/driver/payouts/${driverId}`,
+        {
+          cache: "no-store",
+        }
+      );
+
       const payoutData = await payoutRes.json();
 
       setEarnings(data);
@@ -47,11 +56,14 @@ const payoutRes = await fetch(
 
     try {
       const res = await fetch(
-  `${process.env.NEXT_PUBLIC_API_URL}/driver/${driverId}/cashout`,
-  {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+        `${process.env.NEXT_PUBLIC_API_URL}/driver/${driverId}/cashout`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const result = await res.json();
 
@@ -61,7 +73,9 @@ const payoutRes = await fetch(
         );
 
         setMessage(
-          `✅ Cash out submitted: $${payoutAmount.toFixed(2)} is processing.`
+          `✅ Cash out submitted: $${payoutAmount.toFixed(
+            2
+          )} is processing.`
         );
 
         await loadEarnings();
@@ -90,6 +104,7 @@ const payoutRes = await fetch(
     return (
       <>
         <DriverTopNav />
+
         <main style={page}>
           <h1 style={title}>Driver Earnings</h1>
           <p style={subtitle}>Loading earnings...</p>
@@ -102,6 +117,7 @@ const payoutRes = await fetch(
     return (
       <>
         <DriverTopNav />
+
         <main style={page}>
           <h1 style={title}>Driver Earnings</h1>
           <p style={subtitle}>No earnings found.</p>
@@ -118,10 +134,12 @@ const payoutRes = await fetch(
         <section style={hero}>
           <div>
             <p style={badge}>🚗 GlideWay Driver Finance</p>
+
             <h1 style={title}>Driver Earnings + Completed Trips</h1>
+
             <p style={subtitle}>
-              Track your income, tips, trips, payouts, available balance, and
-              instant cash out.
+              Track your income, tips, trips, payouts, available balance,
+              and instant cash out.
             </p>
           </div>
         </section>
@@ -131,32 +149,44 @@ const payoutRes = await fetch(
         <div style={grid}>
           <StatCard
             labelText="Total Earnings"
-            value={`$${Number(earnings.totalEarnings || 0).toFixed(2)}`}
+            value={`$${Number(
+              earnings.totalEarnings || 0
+            ).toFixed(2)}`}
           />
 
           <StatCard
             labelText="Today Earnings"
-            value={`$${Number(earnings.todayEarnings || 0).toFixed(2)}`}
+            value={`$${Number(
+              earnings.todayEarnings || 0
+            ).toFixed(2)}`}
           />
 
           <StatCard
             labelText="Weekly Earnings"
-            value={`$${Number(earnings.weeklyEarnings || 0).toFixed(2)}`}
+            value={`$${Number(
+              earnings.weeklyEarnings || 0
+            ).toFixed(2)}`}
           />
 
           <StatCard
             labelText="Tips Earned"
-            value={`$${Number(earnings.tipsEarned || 0).toFixed(2)}`}
+            value={`$${Number(
+              earnings.tipsEarned || 0
+            ).toFixed(2)}`}
           />
 
           <StatCard
             labelText="Available Balance"
-            value={`$${Number(earnings?.availableBalance ?? 0).toFixed(2)}`}
+            value={`$${Number(
+              earnings?.availableBalance ?? 0
+            ).toFixed(2)}`}
           />
 
           <StatCard
             labelText="Pending Balance"
-            value={`$${Number(earnings.pendingBalance || 0).toFixed(2)}`}
+            value={`$${Number(
+              earnings.pendingBalance || 0
+            ).toFixed(2)}`}
           />
 
           <StatCard
@@ -164,31 +194,37 @@ const payoutRes = await fetch(
             value={`${earnings.completedTrips || 0}`}
           />
 
-          <StatCard labelText="Payout Status" value={displayPayoutStatus} />
+          <StatCard
+            labelText="Payout Status"
+            value={displayPayoutStatus}
+          />
         </div>
 
         <section style={cashOutCard}>
           <h2 style={sectionTitle}>💳 Instant Cash Out</h2>
 
           <p style={bodyText}>
-            Available balance can be requested for instant payout. This can later
-            connect to Dwolla, bank ACH, debit-card push payout, or another
-            approved payout processor.
+            Available balance can be requested for instant payout.
+            This can later connect to Dwolla, bank ACH,
+            debit-card push payout, or another approved payout processor.
           </p>
 
           <button
             onClick={cashOut}
             disabled={
-              cashOutLoading || Number(earnings?.availableBalance ?? 0) <= 0
+              cashOutLoading ||
+              Number(earnings?.availableBalance ?? 0) <= 0
             }
             style={{
               ...cashOutButton,
               opacity:
-                cashOutLoading || Number(earnings?.availableBalance ?? 0) <= 0
+                cashOutLoading ||
+                Number(earnings?.availableBalance ?? 0) <= 0
                   ? 0.5
                   : 1,
               cursor:
-                cashOutLoading || Number(earnings?.availableBalance ?? 0) <= 0
+                cashOutLoading ||
+                Number(earnings?.availableBalance ?? 0) <= 0
                   ? "not-allowed"
                   : "pointer",
             }}
@@ -218,25 +254,43 @@ const payoutRes = await fetch(
         <section style={transactionCard}>
           <h2 style={sectionTitle}>📜 Trip History</h2>
 
-          {!earnings.transactions || earnings.transactions.length === 0 ? (
+          {!earnings.transactions ||
+          earnings.transactions.length === 0 ? (
             <p style={bodyText}>No trip history yet.</p>
           ) : (
             earnings.transactions.map((txn: any) => (
-              <div key={txn.id || txn.createdAt} style={transactionRow}>
+              <div
+                key={txn.id || txn.createdAt}
+                style={transactionRow}
+              >
                 <div>
                   <b>{txn.type || "Completed Ride"}</b>
-                  <p style={smallText}>{txn.description || "Trip completed"}</p>
+
                   <p style={smallText}>
-                    {txn.pickup ? `Pickup: ${txn.pickup}` : ""}
+                    {txn.description || "Trip completed"}
                   </p>
+
                   <p style={smallText}>
-                    {txn.dropoff ? `Drop-off: ${txn.dropoff}` : ""}
+                    {txn.pickup
+                      ? `Pickup: ${txn.pickup}`
+                      : ""}
+                  </p>
+
+                  <p style={smallText}>
+                    {txn.dropoff
+                      ? `Drop-off: ${txn.dropoff}`
+                      : ""}
                   </p>
                 </div>
 
                 <div style={{ textAlign: "right" }}>
-                  <b style={moneyText}>${Number(txn.amount || 0).toFixed(2)}</b>
-                  <p style={smallText}>{txn.status || "completed"}</p>
+                  <b style={moneyText}>
+                    ${Number(txn.amount || 0).toFixed(2)}
+                  </b>
+
+                  <p style={smallText}>
+                    {txn.status || "completed"}
+                  </p>
                 </div>
               </div>
             ))
@@ -250,13 +304,19 @@ const payoutRes = await fetch(
             <p style={bodyText}>No payout requests yet.</p>
           ) : (
             payouts.map((payout: any) => (
-              <div key={payout.id} style={transactionRow}>
+              <div
+                key={payout.id}
+                style={transactionRow}
+              >
                 <div>
                   <b style={moneyText}>
                     ${Number(payout.amount || 0).toFixed(2)}
                   </b>
+
                   <p style={smallText}>
-                    Arrival: {payout.estimatedArrival || "1–2 business days"}
+                    Arrival:{" "}
+                    {payout.estimatedArrival ||
+                      "1–2 business days"}
                   </p>
                 </div>
 
@@ -267,7 +327,9 @@ const payoutRes = await fetch(
 
                   <p style={smallText}>
                     {payout.createdAt
-                      ? new Date(payout.createdAt).toLocaleString()
+                      ? new Date(
+                          payout.createdAt
+                        ).toLocaleString()
                       : ""}
                   </p>
                 </div>
@@ -295,7 +357,9 @@ function StatCard({
   );
 }
 
-function getPayoutBadge(status: string): React.CSSProperties {
+function getPayoutBadge(
+  status: string
+): React.CSSProperties {
   return {
     padding: "7px 14px",
     borderRadius: "999px",
@@ -312,6 +376,7 @@ function getPayoutBadge(status: string): React.CSSProperties {
         : status === "rejected"
         ? "#FEF2F2"
         : "#F3F4F6",
+
     color:
       status === "paid"
         ? "#2F8F57"
@@ -322,6 +387,7 @@ function getPayoutBadge(status: string): React.CSSProperties {
         : status === "rejected"
         ? "#DC2626"
         : "#374151",
+
     border:
       status === "paid"
         ? "1px solid #57BE7D"
@@ -342,10 +408,12 @@ const page: React.CSSProperties = {
 const hero: React.CSSProperties = {
   padding: "30px",
   borderRadius: "26px",
-  background: "linear-gradient(135deg, #FFFFFF, #ECFDF3)",
+  background:
+    "linear-gradient(135deg, #FFFFFF, #ECFDF3)",
   border: "1px solid #D1D5DB",
   marginBottom: "24px",
-  boxShadow: "0 12px 30px rgba(87, 190, 125, 0.14)",
+  boxShadow:
+    "0 12px 30px rgba(87, 190, 125, 0.14)",
 };
 
 const badge: React.CSSProperties = {
@@ -374,7 +442,8 @@ const subtitle: React.CSSProperties = {
 
 const grid: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+  gridTemplateColumns:
+    "repeat(auto-fit, minmax(220px, 1fr))",
   gap: "18px",
   marginBottom: "25px",
 };
@@ -384,7 +453,8 @@ const card: React.CSSProperties = {
   border: "1px solid #D1D5DB",
   borderRadius: "18px",
   padding: "22px",
-  boxShadow: "0 12px 26px rgba(17, 24, 39, 0.06)",
+  boxShadow:
+    "0 12px 26px rgba(17, 24, 39, 0.06)",
 };
 
 const label: React.CSSProperties = {
@@ -406,7 +476,8 @@ const cashOutCard: React.CSSProperties = {
   borderRadius: "20px",
   padding: "24px",
   marginBottom: "25px",
-  boxShadow: "0 12px 26px rgba(17, 24, 39, 0.06)",
+  boxShadow:
+    "0 12px 26px rgba(17, 24, 39, 0.06)",
 };
 
 const sectionTitle: React.CSSProperties = {
@@ -428,7 +499,8 @@ const cashOutButton: React.CSSProperties = {
   fontWeight: "bold",
   fontSize: "16px",
   marginTop: "15px",
-  boxShadow: "0 12px 24px rgba(87, 190, 125, 0.28)",
+  boxShadow:
+    "0 12px 24px rgba(87, 190, 125, 0.28)",
 };
 
 const statusText: React.CSSProperties = {
@@ -442,7 +514,8 @@ const transactionCard: React.CSSProperties = {
   borderRadius: "20px",
   padding: "24px",
   marginBottom: "25px",
-  boxShadow: "0 12px 26px rgba(17, 24, 39, 0.06)",
+  boxShadow:
+    "0 12px 26px rgba(17, 24, 39, 0.06)",
 };
 
 const transactionRow: React.CSSProperties = {
