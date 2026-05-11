@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
 const driverId = "driver-001";
-const socket = io("http://localhost:5000");
-
+const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "");
 export default function DriverEarningsPage() {
   const [earnings, setEarnings] = useState<any>(null);
   const [payouts, setPayouts] = useState<any[]>([]);
@@ -21,14 +20,15 @@ export default function DriverEarningsPage() {
   async function loadEarnings() {
     try {
       const res = await fetch(
-        `http://localhost:5000/driver/${driverId}/earnings?t=${Date.now()}`,
-        { cache: "no-store" }
-      );
-      const data = await res.json();
+  `${process.env.NEXT_PUBLIC_API_URL}/driver/${driverId}/earnings?t=${Date.now()}`,
+  { cache: "no-store" }
+);
 
-      const payoutRes = await fetch(
-        `http://localhost:5000/driver/payouts/${driverId}`
-      );
+const data = await res.json();
+
+const payoutRes = await fetch(
+  `${process.env.NEXT_PUBLIC_API_URL}/driver/payouts/${driverId}`
+);
       const payoutData = await payoutRes.json();
 
       setEarnings(data);
@@ -46,7 +46,9 @@ export default function DriverEarningsPage() {
     setMessage("");
 
     try {
-      const res = await fetch(`http://localhost:5000/driver/${driverId}/cashout`, {
+      const res = await fetch(
+  `${process.env.NEXT_PUBLIC_API_URL}/driver/${driverId}/cashout`,
+  {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
